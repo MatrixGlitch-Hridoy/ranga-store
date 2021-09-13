@@ -11,6 +11,8 @@ const showProducts = (products) => {
   const allProducts = products.map((pd) => pd);
   for (const product of allProducts) {
     const image = product.image; //changed images to image
+     //by destructuring product object
+     const {rate,count}= product.rating
     const div = document.createElement("div");
     div.classList.add("product");
     div.innerHTML = `<div class="single-product">
@@ -20,12 +22,29 @@ const showProducts = (products) => {
       <h3>${product.title}</h3>
       <p>Category: ${product.category}</p>
       <h2>Price: $ ${product.price}</h2>
+      <h5>Total-Rating : ${count}   </h5>
+      <h6>Average-rating: ${rate}</h6>
       <button onclick="addToCart(${product.id},${product.price})" id="addToCart-btn" class="buy-now btn btn-success">add to cart</button>
-      <button id="details-btn" class="btn btn-danger">Details</button></div>
+      <button id="details-btn" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#exampleModal" onclick="loadDetails(${product.id})">Details</button></div>
       `;
     document.getElementById("all-products").appendChild(div);
   }
 };
+
+//load Details
+const loadDetails = (id)=>{
+  const url = `https://fakestoreapi.com/products/${id}`
+  fetch(url)
+    .then((res) => res.json())
+    .then((data) => showDetails(data));
+}
+//Show details
+const showDetails = (data)=>{
+  document.getElementById("modalBody").innerHTML = `
+    <p><span class="text-primary">Price:</span>$${data.price}</p>
+    <p><span class="text-primary">Description:</span> ${data.description}</p>
+  `;
+}
 let count = 0;
 const addToCart = (id, price) => {
   count = count + 1;
